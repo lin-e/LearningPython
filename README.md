@@ -8,3 +8,7 @@ In the National Lottery, players pick 6 numbers between 1 and 59. Six unique ran
 #mayan.py
 
 In the Mayan calendar there were 20 days (called kins) in a uinal, 18 uinals in a tun, 20 tuns in a katun and 20 katuns in a baktun.  We write our dates in the order day, month then year. The Maya wrote their dates in reverse, giving the baktun, katun, tun, uinal then kin. The Mayan date 13-20-7-16-3 corresponds to 1-1-2000.  Write a program which converts between the Mayan calendar and our own.
+
+#cards.py
+
+Write a program that will generate a random playing card e.g. ‘9 Hearts’, ‘Queen Spades’ when the return key is pressed. Rather than generate a random number from 1 to 52. Create two random numbers – one for the suit and one for the card. However we don't want the same card drawn twice. Update this program by using an array to prevent the same card being dealt twice from the pack of cards. Convert this code into a procedure ‘DealCard’ that will display the card dealt or ‘no more cards’. Call your procedure 53 times!
