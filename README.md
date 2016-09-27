@@ -12,3 +12,7 @@ In the Mayan calendar there were 20 days (called kins) in a uinal, 18 uinals in 
 #cards.py
 
 Write a program that will generate a random playing card e.g. ‘9 Hearts’, ‘Queen Spades’ when the return key is pressed. Rather than generate a random number from 1 to 52. Create two random numbers – one for the suit and one for the card. However we don't want the same card drawn twice. Update this program by using an array to prevent the same card being dealt twice from the pack of cards. Convert this code into a procedure ‘DealCard’ that will display the card dealt or ‘no more cards’. Call your procedure 53 times!
+
+#hangman.py
+
+Player 1 types in a word. Player 2 has to guess the word in 5 lives
