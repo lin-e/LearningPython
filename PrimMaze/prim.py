@@ -1,5 +1,84 @@
+from turtle import *
 import math # used for the ceiling calculations
 import random # used to generate weights for each node, instead of weighting the arcs
+
+class point_update:
+    def __init__(self, parent):
+        self.end = False
+        self.new = list()
+        self.remove = False
+class path:
+    def __init__(self, parent):
+        self.all = list()
+        self.entity = parent
+        self.start = [0, 0]
+        self.end = [self.entity.parent.grid_width, self.entity.parent.grid_width]
+        self.current = self.start
+        self.all.append(self.current)
+    def length(self):
+        return len(self.all)
+    def copy(self, direction):
+        to_return = path(self.entity)
+        for single_point in self.all:
+            to_return.all.append(single_point)
+        to_return.all.append(self.current)
+        to_return.current = self.entity.parent.move_point(self.current, direction)
+        to_return.all.append(to_return.current)
+        return to_return
+    def calculate(self):
+        if not self.current in self.entity.used:
+            self.entity.used.append(self.current)
+        to_return = point_update(self)
+        if self.current[0] == self.end[0] and self.current[1] == self.end[1]:
+            to_return.end = True
+            return to_return
+        possible = list()
+        for d in range(1, 5):
+            next_point = self.entity.parent.move_point(self.current, d)
+            if next_point in self.all:
+                continue
+            if self.entity.parent.get_point(next_point[0], next_point[1]) == 0:
+                continue
+            if next_point in self.entity.used:
+                continue
+            self.entity.used.append(next_point)
+            possible.append(d)
+        if len(possible) == 1:
+            to_return.remove = False
+            self.current = self.entity.parent.move_point(self.current, possible[0])
+            self.all.append(self.current)
+            if self.current[0] == self.end[0] and self.current[1] == self.end[1]:
+                to_return.end = True
+        else:
+            to_return.remove = True
+        if len(possible) > 1:
+            for d in possible:
+                to_return.new.append(self.copy(d))
+        return to_return
+    
+class entity:
+    def __init__(self, maze):
+        self.parent = maze
+        self.end = path(self)
+        self.used = list()
+        self.paths = list()
+        # remember that 0 is a wall!
+        print()
+    def solve(self):
+        self.paths.append(path(self))
+        path_found = False
+        while not path_found:
+            if len(paths) == 0:
+                break
+            remove = list()
+            add = list()
+            for path in self.paths:
+                update = path.calculate()
+                if update.end:
+                    self.end = update;
+                    path_found = True
+                    break
+                ####DONE HERE
 class grid: # grid to hold two dimensional points
     def __init__(self, width, height): # creates new grid with specified dimensions
         self.grid_width = width # sets the width
@@ -88,6 +167,7 @@ class maze: # holds all the data for the maze
             self.parent.set_point(actual_point_start[0], actual_point_start[1], 1) # marks the point as a path
             self.parent.set_point(actual_point_path[0], actual_point_path[1], 1) # ''
             self.parent.set_point(actual_point_end[0], actual_point_end[1], 1) # ''
+            print((self.node_width * self.node_height) - len(self.active_nodes))
     def display(self, wall): # displays the grid
         for y in range(0, self.parent.grid_height): # goes through each row
             final_line = "" # creates an empty string to hold row
@@ -121,11 +201,36 @@ class arc: # class to hold information between two points
                 self.move_dir = 3 # moves left
             else: # otherwise
                 self.move_dir = 4 # moves right
+def draw_line(x1, y1, x2, y2):
+    penup()
+    goto(x1, y1)
+    pendown()
+    goto(x2, y2)
+    penup()
+def map_point(x1, y1, x2, y2, x_scale, y_scale, offset):
+    draw_line((x1 * x_scale) + offset[0], (y1 * y_scale) + offset[1], (x2 * x_scale) + offset[0], (y2 * y_scale) + offset[1])
+def is_wall(point, grid):
+    if point[0] < 0 or point[1] < 0: 
+        return False
+    try:
+        return (grid.get_point(point[0], point[1])) == 0
+    except:
+        return False
+def simple_wall(x1, y1, x2, y2):
+    map_point(x1, y1, x2, y2, 10, -15, [-400, 400])
+color("black")
+speed(0)
 # actual program running
-max_width = 79 # sets width of the display
-max_height = 25 # sets height of the display
+max_width = 81 # sets width of the display
+max_height = 51 # sets height of the display
 primary_grid = grid(max_width, max_height) # creates a new grid, of which the maze is a child of
 primary_maze = maze(primary_grid, 1000) # creates a new maze with the parent being the grid we just created, and an upper bound of 1000
 primary_maze.generate() # generates the new maze
-#print(primary_maze.parent.main_grid) # comment out this line, this just displays the raw data of the grid
-primary_maze.display("0") # displays with a wall of '0'
+primary_maze.display("#")
+for y in range(0, max_height):
+    for x in range(0, max_width):
+        if is_wall([x, y], primary_maze.parent):
+            for d in range(1, 5):
+                new_point = primary_maze.move_point([x, y], d)
+                if is_wall(new_point, primary_maze.parent):
+                    simple_wall(x, y, new_point[0], new_point[1])
