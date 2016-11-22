@@ -152,11 +152,7 @@ primary_maze.display("#")
 for y in range(0, max_height):
     for x in range(0, max_width):
         if is_wall([x, y], primary_maze.parent):
-            if is_wall([x, y - 1], primary_maze.parent):
-                simple_wall(x, y, x, y - 1)
-            if is_wall([x, y + 1], primary_maze.parent):
-                simple_wall(x, y, x, y + 1)
-            if is_wall([x - 1, y], primary_maze.parent):
-                simple_wall(x, y, x - 1, y)
-            if is_wall([x + 1, y], primary_maze.parent):
-                simple_wall(x, y, x + 1, y)
+            for d in range(1, 5):
+                new_point = primary_maze.move_point([x, y], d)
+                if is_wall(new_point, primary_maze.parent):
+                    simple_wall(x, y, new_point[0], new_point[1])
